@@ -26,6 +26,12 @@ Then:
 ./bin/distortion
 ```
 
+## TODO
+
+* [ ] Add LPF at the end
+* [ ] Make it parametric (adjustable gain)
+* [ ] Implement tone stack
+
 ## References
 
 * https://www.mitpressjournals.org/doi/pdf/10.1162/comj.2009.33.2.85
