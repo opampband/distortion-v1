@@ -25,3 +25,7 @@ Then:
 ``` bash
 ./bin/distortion
 ```
+
+## References
+
+* https://www.mitpressjournals.org/doi/pdf/10.1162/comj.2009.33.2.85
