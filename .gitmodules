@@ -1,0 +1,3 @@
+[submodule "jack-wrapper"]
+	path = jack-wrapper
+	url = git@github.com:opampband/jack-wrapper.git
