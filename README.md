@@ -29,6 +29,8 @@ Then:
 ## TODO
 
 * [ ] Add LPF at the end
+* [ ] Experiment with other non-linear functions
+  * try to get more gradual transition from linear-ish to clipped region
 * [ ] Make it parametric (adjustable gain)
 * [ ] Implement tone stack
 
