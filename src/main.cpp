@@ -3,19 +3,35 @@
 
 #include <jack_wrapper/jack_wrapper.h>
 
+typedef jack_default_audio_sample_t sample_t;
+
 jack_port_t *inputPort;
 jack_port_t *outputPort;
 
-inline jack_default_audio_sample_t
-sigmoidDistortionFunction(jack_default_audio_sample_t x) {
-  double gain = 20;
-  double max = 0.3;
-  double dc = 0;
+inline sample_t sigmoidDistortionFunction(sample_t x, sample_t gain,
+                                          sample_t max, sample_t dc) {
   return max * gain * x / sqrt(1 + (gain * pow(gain * x, 2))) + dc;
 }
 
-inline jack_default_audio_sample_t
-distortionFunction(jack_default_audio_sample_t x) {
+inline sample_t asymmetricSigmoidDistortionFunction(sample_t x) {
+  // Cutoff for chopping top
+  static sample_t cutoff = 0.05;
+  static sample_t slope = 0.1;
+  static sample_t gain = 20;
+  static sample_t max = 0.3;
+  static sample_t dc = 0;
+  // Calculate constant to add to linear region to make it join up with the
+  // sigmoid function
+  static sample_t b =
+      sigmoidDistortionFunction(x, gain, max, dc) - slope * cutoff;
+  if (x > cutoff) {
+    return slope * x + b;
+  } else {
+    return sigmoidDistortionFunction(x, gain, max, dc);
+  }
+}
+
+inline sample_t distortionFunction(sample_t x) {
   if (x < -0.08905) {
     // Assume x >= -1
     // Therefore, this first interval is actually -1 <= x < -0.08905
@@ -40,7 +56,7 @@ int processCallback(jack_nframes_t nframes, void *arg) {
   out =
       (jack_default_audio_sample_t *)jack_port_get_buffer(outputPort, nframes);
   for (size_t i = 0; i < nframes; ++i) {
-    out[i] = sigmoidDistortionFunction(in[i]);
+    out[i] = asymmetricSigmoidDistortionFunction(in[i]);
   }
 
   return 0;
