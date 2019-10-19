@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+DISTORTION_FUNCTION_FIGURE = 1
+APPLIED_FUNCTION_FIGURE = 2
+
 
 def distortion_function_1(x):
     # assumes -1 <= x <= 1
@@ -13,18 +16,33 @@ def distortion_function_1(x):
         return 0.630035
 
 
-def plot_function(function):
-    x = np.arange(-4, 4, 1 / 1024)
+def plot_distortion_function(function):
+    x = np.arange(-1, 1, 1 / 1024)
+
+    # Plot normal sine wave
     vfunc = np.vectorize(function)
     y = vfunc(x)
-    print(y)
-    plt.figure(1)
+    plt.figure(DISTORTION_FUNCTION_FIGURE)
+    plt.plot(y)
+
+
+def plot_applied_function(function):
+    x = np.arange(-4, 4, 1 / 1024)
+
+    # Plot normal sine wave
+    y = np.sin(x)
+    plt.figure(APPLIED_FUNCTION_FIGURE)
+    plt.plot(y)
+
+    # Plot distorted sine wave on same plot
+    vfunc = np.vectorize(lambda t: function(np.sin(t)))
+    y = vfunc(x)
     plt.plot(y)
 
 
 def main():
-    plot_function(np.sin)
-    plot_function(lambda t: distortion_function_1(np.sin(t)))
+    plot_distortion_function(distortion_function_1)
+    plot_applied_function(distortion_function_1)
     plt.show()
 
 
