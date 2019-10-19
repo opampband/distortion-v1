@@ -7,6 +7,14 @@ jack_port_t *inputPort;
 jack_port_t *outputPort;
 
 inline jack_default_audio_sample_t
+sigmoidDistortionFunction(jack_default_audio_sample_t x) {
+  double gain = 20;
+  double max = 0.3;
+  double dc = 0;
+  return max * gain * x / sqrt(1 + (gain * pow(gain * x, 2))) + dc;
+}
+
+inline jack_default_audio_sample_t
 distortionFunction(jack_default_audio_sample_t x) {
   if (x < -0.08905) {
     // Assume x >= -1
@@ -32,7 +40,7 @@ int processCallback(jack_nframes_t nframes, void *arg) {
   out =
       (jack_default_audio_sample_t *)jack_port_get_buffer(outputPort, nframes);
   for (size_t i = 0; i < nframes; ++i) {
-    out[i] = distortionFunction(in[i]);
+    out[i] = sigmoidDistortionFunction(in[i]);
   }
 
   return 0;

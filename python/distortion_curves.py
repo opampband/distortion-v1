@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math
 import numpy as np
 
 DISTORTION_FUNCTION_FIGURE = 1
@@ -14,6 +15,10 @@ def distortion_function_1(x):
         return -6.153 * x ** 2 + 3.9375 * x
     else:
         return 0.630035
+
+
+def sigmoid_distortion_function(x, gain):
+    return 0.6 * (gain * x) / math.sqrt(1 + (gain * x) ** 2)
 
 
 def plot_distortion_function(function):
@@ -41,8 +46,8 @@ def plot_applied_function(function):
 
 
 def main():
-    plot_distortion_function(distortion_function_1)
-    plot_applied_function(distortion_function_1)
+    plot_distortion_function(lambda t: sigmoid_distortion_function(t, 2))
+    plot_applied_function(lambda t: sigmoid_distortion_function(t, 2))
     plt.show()
 
 
