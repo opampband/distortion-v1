@@ -6,7 +6,8 @@
 jack_port_t *inputPort;
 jack_port_t *outputPort;
 
-jack_default_audio_sample_t distortionFunction(jack_default_audio_sample_t x) {
+inline jack_default_audio_sample_t
+distortionFunction(jack_default_audio_sample_t x) {
   if (x < -0.08905) {
     // Assume x >= -1
     // Therefore, this first interval is actually -1 <= x < -0.08905
