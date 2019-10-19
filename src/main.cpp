@@ -31,6 +31,19 @@ inline sample_t asymmetricSigmoidDistortionFunction(sample_t x) {
   }
 }
 
+inline sample_t asymmetricSigmoidDistortionFunction2(sample_t x) {
+  // Cutoff for chopping top
+  static sample_t cutoff = 0.05;
+  static sample_t gain = 20;
+  static sample_t max = 0.3;
+  static sample_t dc = 0;
+  if (x > cutoff) {
+    return sigmoidDistortionFunction(sigmoidDistortionFunction(x, gain, max, dc), gain * 2, max, dc);
+  } else {
+    return sigmoidDistortionFunction(x, gain, max, dc);
+  }
+}
+
 inline sample_t distortionFunction(sample_t x) {
   if (x < -0.08905) {
     // Assume x >= -1
@@ -56,7 +69,7 @@ int processCallback(jack_nframes_t nframes, void *arg) {
   out =
       (jack_default_audio_sample_t *)jack_port_get_buffer(outputPort, nframes);
   for (size_t i = 0; i < nframes; ++i) {
-    out[i] = asymmetricSigmoidDistortionFunction(in[i]);
+    out[i] = asymmetricSigmoidDistortionFunction2(in[i]);
   }
 
   return 0;
